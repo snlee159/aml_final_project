@@ -1,2 +1,2 @@
-numpy == 1.19.2
-pytube == 9.7.0
+numpy == 1.19.0
+pytube3 == 9.6.4
