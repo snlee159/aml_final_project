@@ -13,3 +13,9 @@ def get_video(file, nframes=10):
 def cat_popularity_classification():
     test = get_video('https://www.youtube.com/watch?v=C9O28ne6bG8')
     print(test)
+
+def main():
+    cat_popularity_classification()
+
+if __name__ == "__main__":
+    main()
