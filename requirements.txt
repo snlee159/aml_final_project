@@ -1,2 +1,2 @@
 numpy == 1.19.2
-pytube3 == 9.6.4
+git+https://github.com/nficano/pytube
