@@ -3,7 +3,7 @@ import pandas as pd
 
 # YouTube api
 from pytube import YouTube
-import cv2
+#import cv2
 
 
 def get_video(my_file):
