@@ -56,3 +56,20 @@ def get_list_videos(keyword='cat'):
     list_df['title'] = title_list
     now = dt.strftime(dt.now(), "%Y%m%d_%H%M%S")
     list_df.to_csv(f'aml_final_project/csv/video_list_{now}.csv', index=False)
+
+
+def get_views(saved_list_df):
+    saved_list_df['view_count'] = 0
+    saved_list_df['duration'] = ''
+    for i, row in saved_list_df.iterrows():
+        if i % 100 == 0:
+            print(i)
+        response = requests.get(
+            f'https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails&id={row["videoId"]}&key={google_token}')
+        response = response.json()
+        if len(response['items']) > 0:
+            saved_list_df.loc[i, 'view_count'] = response['items'][0]['statistics']['viewCount']
+            saved_list_df.loc[i, 'duration'] = response['items'][0]['contentDetails']['duration']
+
+    now = dt.strftime(dt.now(), "%Y%m%d_%H%M%S")
+    saved_list_df.to_csv(f'aml_final_project/csv/full_list_df_{now}.csv', index=False)
