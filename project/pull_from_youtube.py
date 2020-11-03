@@ -68,8 +68,13 @@ def get_views(saved_list_df):
             f'https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails&id={row["videoId"]}&key={google_token}')
         response = response.json()
         if len(response['items']) > 0:
-            saved_list_df.loc[i, 'view_count'] = response['items'][0]['statistics']['viewCount']
+            saved_list_df.loc[i, 'view_count'] = int(response['items'][0]['statistics']['viewCount'])
             saved_list_df.loc[i, 'duration'] = response['items'][0]['contentDetails']['duration']
 
+    # Only keep videos that are still online
+    saved_list_df = saved_list_df[saved_list_df.view_count > 0]
+    saved_list_df = saved_list_df[saved_list_df['duration'] != 'P0D']
+    saved_list_df['seconds'] = saved_list_df['duration'].apply(lambda x: isodate.parse_duration(x).total_seconds())
+    saved_list_df = saved_list_df[saved_list_df['seconds'] > 30]
     now = dt.strftime(dt.now(), "%Y%m%d_%H%M%S")
-    saved_list_df.to_csv(f'aml_final_project/csv/full_list_df_{now}.csv', index=False)
+    saved_list_df.to_csv(f'aml_final_project/csv/full_final_list_{now}.csv', index=False)
