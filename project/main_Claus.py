@@ -1,8 +1,11 @@
+import pickle
 from project.global_config import GlobalConfig
 from project.cat_popularity import cat_popularity_classification
 from project.cat_video_editing import limit_video_length, extract_frames
 from project.vgg16_cat_detector import load_vgg16_model
 from project.vgg16_cat_detector import preprocess_and_predict_frames
+from project.feature_extraction import load_feature_extraction_model
+from project.feature_extraction import extract_pixel_change_feature
 
 
 # ===== Download video =====
@@ -11,8 +14,8 @@ from project.vgg16_cat_detector import preprocess_and_predict_frames
 
 # ===== edit video =====
 #limit_video_length(raw_video_data_path=GlobalConfig.RAW_VIDEO_DIR_PATH,
-#                   start_time=0,
-#                   end_time=30)
+#                   start_time=10,
+#                   end_time=40)
 
 # ===== extract frames for classification purposes =====
 extract_frames(clipped_video_data_path=GlobalConfig.CLIPPED_VIDEO_DIR_PATH,
@@ -25,6 +28,18 @@ vgg16_model = load_vgg16_model()
 cat_video_boolean_dict = preprocess_and_predict_frames(model=vgg16_model,
                                                        frame_dir=GlobalConfig.FRAMES_BASE_PATH)
 print(cat_video_boolean_dict)
+
+
+# ===== feature extraction =====
+#feature_extraction_model = load_feature_extraction_model()
+extract_pixel_change_feature(frame_dir=GlobalConfig.FRAMES_BASE_PATH)
+
+with open('pixel_change_feature.pkl', 'rb') as file:
+    test = pickle.load(file)
+
+for key, value in test.items():
+    print(key, value)
+
 print('Success at running')
 
 

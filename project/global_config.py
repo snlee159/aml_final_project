@@ -12,6 +12,8 @@ class GlobalConfig:
                     'tiger_cat',
                     'Persian_cat',
                     'Siamese_cat',
-                    'Egyptian_cat',
-                    'polecat',
-                    'Madagascar_cat']
+                    'Egyptian_cat']
+    VGG16_CAT_LABEL_INDICES = [281, 282, 283, 284, 285]
+
+    # feature names
+    PIXEL_CHANGES = 'Pixel_changes'
