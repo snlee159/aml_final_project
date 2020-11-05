@@ -1,5 +1,7 @@
 # Imports
 import pandas as pd
+import os
+import regex as re
 
 # YouTube api
 from pytube import YouTube
