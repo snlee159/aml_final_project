@@ -81,6 +81,44 @@ def extract_viewcount_feature_from_raw_videos(cat_video_boolean_dict):
 
 
 
+def extract_video_title_from_raw_videos(cat_video_boolean_dict):
+
+    # load dict with relevant videos
+    with open(cat_video_boolean_dict, 'rb') as file:
+        cat_video_boolean_dict = pickle.load(file)
+
+    # load indices of relevant cat videos
+    relevant_cat_video_indices = []
+    for key, value in cat_video_boolean_dict.items():
+        if value == 1:
+            key_regex = re.findall(r'Clip_\d*', str(key))[0]
+            relevant_cat_video_indices.append(int(key_regex[5:]))
+
+    # create new feature dictionary for video title
+    video_title_feature_dict = dict()
+
+    # extract video title of relevant cat videos from title of raw videos
+    raw_video_titles = os.listdir(GlobalConfig.RAW_VIDEO_DIR_PATH)
+    for video_idx, raw_video_title in enumerate(raw_video_titles):
+        try:
+            video_title_str = re.findall(r'.*Viewcount_', raw_video_title)[0]
+            video_title = video_title_str[:-12]
+        except IndexError:
+            video_title = 'No title given'
+
+        # if video relevant, clean title and add to dict
+        if video_idx in relevant_cat_video_indices:
+            video_title_cleaned = ''
+            for word in video_title.split():
+                word_cleaned = re.sub('[^a-zA-Z0-9]+', '', word)
+                video_title_cleaned = video_title_cleaned + word_cleaned + ' '
+            video_title_cleaned = video_title_cleaned.lower().rstrip()
+            video_title_feature_dict.update({'Clip_'+str(video_idx): video_title_cleaned})
+
+    # save video_title_feature_dict
+    with open('video_title_feature_dict.pkl', 'wb') as file:
+        pickle.dump(video_title_feature_dict, file)
+
 
 
 
