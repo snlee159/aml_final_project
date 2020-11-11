@@ -30,7 +30,7 @@ def preprocess_and_predict_frames(model, frame_dir):
 
     for subdir in subdir_names:
 
-        print('=====================', subdir,'=====================')
+        print('=====================', subdir, '=====================')
 
         # list frame_1, frame_2, frame_3, ... in each subdir
         #frame_names = os.listdir(os.path.join(frame_dir, subdir))
@@ -43,8 +43,12 @@ def preprocess_and_predict_frames(model, frame_dir):
             print('=========', frame_name, '=========')
 
             # preprocess each frame (image) for vgg16
-            image = load_img(os.path.join(frame_dir, subdir, frame_name),
-                             target_size=(360, 640, 3))
+            if os.path.exists(os.path.join(frame_dir, subdir, frame_name)):
+                image = load_img(os.path.join(frame_dir, subdir, frame_name),
+                                 target_size=(360, 640, 3))
+            else:
+                print('Frames do not exist for this clip.')
+                continue
             image_array = img_to_array(image)
             image_array_reshaped = image_array.reshape((1,
                                                         image_array.shape[0],
@@ -74,7 +78,11 @@ def preprocess_and_predict_frames(model, frame_dir):
                     break
 
         # decide whether its a cat video or not
-        cat_non_cat_ratio = cat_frames_counter / len(frame_names)
+        try:
+            cat_non_cat_ratio = cat_frames_counter / len(frame_names)
+        except ZeroDivisionError:
+            print('No cat frames exist for this clip.')
+            cat_non_cat_ratio = 0
         print('Detected cats on {} % of the frames.'.format(cat_non_cat_ratio*100))
         if cat_non_cat_ratio > 0.01:
             cat_video_boolean_dict.update({subdir: 1})
