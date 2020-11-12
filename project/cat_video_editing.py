@@ -1,4 +1,6 @@
 import os
+import pickle
+import shutil
 from project.global_config import GlobalConfig
 from project.local_config import LocalConfig
 from moviepy.editor import VideoFileClip
@@ -59,6 +61,41 @@ def extract_frames(clipped_video_data_path, num_frames, times):
             # close loaded video and audio
             video_clip.reader.close()
             video_clip.audio.reader.close_proc()
+
+
+def clean_dataset_with_dict(cat_video_boolean_dict):
+
+    with open(cat_video_boolean_dict, 'rb') as file:
+        cat_video_boolean_dict = pickle.load(file)
+
+    source_basepath_video = GlobalConfig.CLIPPED_VIDEO_DIR_PATH
+    destination_basepath_video = GlobalConfig.CLIPPED_VIDEO_DIR_CLEANED_PATH
+    source_basepath_frames = GlobalConfig.FRAMES_BASE_PATH
+    destination_basepath_frames = GlobalConfig.FRAMES_CLEANED_BASE_PATH
+
+
+    for key, value in cat_video_boolean_dict.items():
+
+        if value == 0:
+            continue
+        elif value == 1:
+            # copy clipped videos
+            source = os.path.join(source_basepath_video, str(key)+'.mp4')
+            destination = os.path.join(destination_basepath_video, str(key)+'.mp4')
+            shutil.copyfile(source, destination)
+
+            # copy frames
+            source = os.path.join(source_basepath_frames, key)
+            os.makedirs(os.path.join(destination_basepath_frames, key))
+            destination = os.path.join(destination_basepath_frames, key)
+            frames = os.listdir(source)
+            for frame in frames:
+                frame_source = os.path.join(source, frame)
+                frame_destination = os.path.join(destination, frame)
+                shutil.copy(frame_source, frame_destination)
+        else:
+            print('Unknown value for key', key)
+
 
 
 
