@@ -1,4 +1,6 @@
 
+NOTE: We did not build this, this is another repo we cloned
+
 # <img src="icon.png" align="left" height="130"/> A Python library for audio feature extraction, classification, segmentation and applications
 
 *This doc contains general info. Click [here](https://github.com/tyiannak/pyAudioAnalysis/wiki) for the complete wiki. For a more generic intro to audio data handling read [this article](https://hackernoon.com/audio-handling-basics-how-to-process-audio-files-using-python-cli-jo283u3y)*
