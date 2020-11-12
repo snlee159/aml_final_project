@@ -1,7 +1,7 @@
 # Imports
 import pandas as pd
-from aml_final_project.pyAudioAnalysis.pyAudioAnalysis import ShortTermFeatures
-from aml_final_project.pyAudioAnalysis.pyAudioAnalysis import audioBasicIO
+from aml_final_project.pyAudioAnalysis1.pyAudioAnalysis import ShortTermFeatures
+from aml_final_project.pyAudioAnalysis1.pyAudioAnalysis import audioBasicIO
 import matplotlib.pyplot as plt
 import os
 
