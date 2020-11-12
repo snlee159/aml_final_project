@@ -16,7 +16,7 @@ def load_vgg16_model():
 def preprocess_and_predict_frames(model, frame_dir):
 
     # load class labels
-    with open('vgg16_labels.pkl', 'rb') as file:
+    with open('../pkl/vgg16_labels.pkl', 'rb') as file:
         vgg16_labels = pickle.load(file)
 
     # list Clip_0, Clip_1, Clip_2, ... directories
@@ -91,7 +91,7 @@ def preprocess_and_predict_frames(model, frame_dir):
             cat_video_boolean_dict.update({subdir: 0})
             print('-->Probably not a cat video.')
 
-    with open('cat_video_boolean_dict.pkl', 'wb') as file:
+    with open('../pkl/cat_video_boolean_dict.pkl', 'wb') as file:
         pickle.dump(cat_video_boolean_dict, file)
 
     return cat_video_boolean_dict

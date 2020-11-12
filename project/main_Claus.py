@@ -9,6 +9,8 @@ from project.feature_extraction import extract_pixel_change_feature
 from project.feature_extraction import extract_viewcount_feature_from_raw_videos
 from project.feature_extraction import extract_video_title_from_raw_videos
 from project.cat_video_editing import clean_dataset_with_dict
+from Regression.data_preprocessing import extract_regression_features
+from Regression.regression_model import train_regression_model
 
 
 # ===== Download test video =====
@@ -40,6 +42,16 @@ from project.cat_video_editing import clean_dataset_with_dict
 # extract_pixel_change_feature(frame_dir=GlobalConfig.FRAMES_CLEANED_BASE_PATH)
 # extract_viewcount_feature_from_raw_videos('cat_video_boolean_dict.pkl')
 # extract_video_title_from_raw_videos('cat_video_boolean_dict.pkl')
+
+
+
+# ===== Regression Model =====
+X_train, y_train, X_test, y_test = extract_regression_features(sound_feature_list=['bpm', 'beat_ratio'],
+                                                               pixel_change=False,
+                                                               train_test_split_ratio=0.8)
+
+train_regression_model(X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test,
+                       type=GlobalConfig.LINEAR_REG_TYPE)
 
 
 

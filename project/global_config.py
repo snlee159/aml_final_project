@@ -19,3 +19,8 @@ class GlobalConfig:
 
     # feature names
     PIXEL_CHANGES = 'Pixel_changes'
+
+    # Regression types
+    LINEAR_REG_TYPE = 'Linear'
+    LASSO_REG_TYPE = 'Lasso'
+    RIDGE_REG_TYPE = 'Ridge'
