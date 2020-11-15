@@ -14,3 +14,4 @@ pydub==0.24.1
 tqdm==4.51.0
 ffprobe==0.5
 google==3.0.0
+scikit-image=0.17.2

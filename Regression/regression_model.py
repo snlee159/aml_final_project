@@ -25,7 +25,9 @@ def train_regression_model(X_train, y_train, X_test, y_test,
 
     # evaluate model
     print('Evaluate regression model')
+    print('Predictions:')
     predictions = reg_model.predict(X_test)
+    #print(predictions)
     score = reg_model.score(X_test, y_test)
     print('Score of', type, 'Regression Model: ', score)
 
