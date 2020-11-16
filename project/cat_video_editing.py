@@ -65,6 +65,11 @@ def extract_frames(clipped_video_data_path, num_frames, times):
 
 def clean_dataset_with_dict(cat_video_boolean_dict):
 
+    '''
+    :param cat_video_boolean_dict: <dict> object that containes information which videos are cat videos
+    :return:
+    '''
+
     with open(cat_video_boolean_dict, 'rb') as file:
         cat_video_boolean_dict = pickle.load(file)
 

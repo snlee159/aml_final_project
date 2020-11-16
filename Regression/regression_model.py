@@ -5,7 +5,7 @@ from sklearn.linear_model import Lasso
 from sklearn.linear_model import Ridge
 
 
-def train_regression_model(X_train, y_train, X_test, y_test,
+def train_test_regression_model(X_train, y_train, X_test, y_test,
                            type=GlobalConfig.LINEAR_REG_TYPE):
 
     # train model
@@ -30,6 +30,8 @@ def train_regression_model(X_train, y_train, X_test, y_test,
     #print(predictions)
     score = reg_model.score(X_test, y_test)
     print('Score of', type, 'Regression Model: ', score)
+
+    return predictions
 
 
 

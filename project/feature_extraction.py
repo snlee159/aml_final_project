@@ -14,12 +14,22 @@ from tensorflow.keras.preprocessing.image import load_img, img_to_array
 
 
 def load_feature_extraction_model():
+
+    '''
+    :return: loaded vgg16 model
+    '''
+
     feature_extraction_model = load_vgg16_model()
     return feature_extraction_model
 
 
 
 def extract_pixel_change_feature(frame_dir, make_dummy_feature=False, threshold=75):
+
+    '''
+    :param frame_dir: path to the dir in which the sub dirs with frames are stored
+    :return:
+    '''
 
     # create dictionary with respective features
     feature_dict = dict()
@@ -64,6 +74,11 @@ def extract_pixel_change_feature(frame_dir, make_dummy_feature=False, threshold=
 
 
 def extract_viewcount_feature_from_raw_videos(cat_video_boolean_dict):
+
+    '''
+    :param cat_video_boolean_dict: dict that holds information what videos are actually cat videos
+    :return:
+    '''
 
     # load dict with relevant videos
     with open(cat_video_boolean_dict, 'rb') as file:
@@ -122,6 +137,11 @@ def make_view_count_feature_categorical(view_count_feature_dict):
 
 def extract_video_title_from_raw_videos(cat_video_boolean_dict):
 
+    '''
+    :param cat_video_boolean_dict: dict that holds information what videos are actually cat videos
+    :return:
+    '''
+
     # load dict with relevant videos
     with open(cat_video_boolean_dict, 'rb') as file:
         cat_video_boolean_dict = pickle.load(file)
@@ -165,7 +185,7 @@ def hog_feature_extraction(num_clusters):
 
     # load images into one array so that they can be classified through K-means
     k_means_training_data_set = []
-    for idx, clip_dir in enumerate(os.listdir(GlobalConfig.FRAMES_CLEANED_BASE_PATH)[:1]):
+    for idx, clip_dir in enumerate(os.listdir(GlobalConfig.FRAMES_CLEANED_BASE_PATH)):
         print('Hog feature extraction for clip', idx)
         for frame in os.listdir(os.path.join(GlobalConfig.FRAMES_CLEANED_BASE_PATH, clip_dir)):
             try:
@@ -187,7 +207,7 @@ def hog_feature_extraction(num_clusters):
 
     # extract features for each image
     hog_feature_dict = dict()
-    for clip_dir in os.listdir(GlobalConfig.FRAMES_CLEANED_BASE_PATH)[1:4]:
+    for clip_dir in os.listdir(GlobalConfig.FRAMES_CLEANED_BASE_PATH):
         hog_feature_dict.update({clip_dir: np.zeros(num_clusters)})
         for frame in os.listdir(os.path.join(GlobalConfig.FRAMES_CLEANED_BASE_PATH, clip_dir)):
             try:

@@ -9,21 +9,32 @@ from tensorflow.keras.preprocessing.image import load_img, img_to_array
 
 
 def load_vgg16_model():
+
+    '''
+    :return: loaded vgg16 model
+    '''
+
     vgg16_model = VGG16()
     return vgg16_model
 
 
 def preprocess_and_predict_frames(model, frame_dir):
 
+    '''
+    :param model: model which detects cats (should be vgg16 trained on imagenet data set)
+    :param frame_dir: path to directory which contains all the sub directories with the clips
+    :return: dictionary that holds information which videos are cat videos
+    '''
+
     # load class labels
     with open('../pkl/vgg16_labels.pkl', 'rb') as file:
         vgg16_labels = pickle.load(file)
 
     # list Clip_0, Clip_1, Clip_2, ... directories
-    #subdir_names = os.listdir(frame_dir)
-    subdir_names = []
-    for idx in range(0, len(os.listdir(frame_dir))):
-        subdir_names.append('Clip_{}'.format(idx))
+    subdir_names = os.listdir(frame_dir)
+    # subdir_names = []
+    # for idx in range(0, len(os.listdir(frame_dir))):
+    #     subdir_names.append('Clip_{}'.format(idx))
 
     # Keep track which video show cats and which ones don't
     cat_video_boolean_dict = dict()
@@ -33,10 +44,10 @@ def preprocess_and_predict_frames(model, frame_dir):
         print('=====================', subdir, '=====================')
 
         # list frame_1, frame_2, frame_3, ... in each subdir
-        #frame_names = os.listdir(os.path.join(frame_dir, subdir))
-        frame_names = []
-        for idx in range(0, len(os.listdir(os.path.join(frame_dir, subdir)))):
-            frame_names.append('frame_{}.png'.format(idx+1))
+        frame_names = os.listdir(os.path.join(frame_dir, subdir))
+        # frame_names = []
+        # for idx in range(0, len(os.listdir(os.path.join(frame_dir, subdir)))):
+        #     frame_names.append('frame_{}.png'.format(idx+1))
         cat_frames_counter = 0
         for idx, frame_name in enumerate(frame_names):
 
