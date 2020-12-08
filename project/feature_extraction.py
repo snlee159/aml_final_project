@@ -110,6 +110,7 @@ def extract_viewcount_feature_from_raw_videos(cat_video_boolean_dict):
     with open('view_count_feature_dict.pkl', 'wb') as file:
         pickle.dump(view_count_feature_dict, file)
 
+
 def make_view_count_feature_categorical(view_count_feature_dict):
 
     # load normal view_count_feature_dict

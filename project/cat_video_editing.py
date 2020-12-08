@@ -1,4 +1,5 @@
 import os
+import re
 import pickle
 import shutil
 from project.global_config import GlobalConfig
@@ -16,19 +17,38 @@ def limit_video_length(raw_video_data_path, start_time, end_time):
     '''
 
     file_names = os.listdir(raw_video_data_path)
+    view_count_dict = dict()
     for idx, file_name in enumerate(file_names):
         raw_video_path = os.path.join(raw_video_data_path, file_name)
+        try:
+            try:
+                view_count_str = re.findall(r'Viewcount_ \d*', file_name)[0]
+                view_count = int(view_count_str[10:])
+                view_count_dict.update({'Clip_{}'.format(idx): view_count})
+            except IndexError:
+                view_count_dict.update({'Clip_{}'.format(idx): 0})
 
-        # https://stackoverflow.com/a/37323543
-        ffmpeg_extract_subclip(filename=raw_video_path,
-                               t1=start_time,
-                               t2=end_time,
-                               targetname=os.path.join(GlobalConfig.CLIPPED_VIDEO_DIR_PATH,
-                                                       'Clip_{}.mp4'.format(idx)))
+
+            # https://stackoverflow.com/a/37323543
+            ffmpeg_extract_subclip(filename=raw_video_path,
+                                   t1=start_time,
+                                   t2=end_time,
+                                   targetname=os.path.join(GlobalConfig.CLIPPED_VIDEO_DIR_PATH,
+                                                           'Clip_{}.mp4'.format(idx)))
+
+        except Exception as e:
+            print('Video not editable!')
+            view_count_dict.pop('Clip_{}'.format(idx))
+
+    with open('../pkl_final/all_view_count_dict.pkl', 'wb') as file:
+        pickle.dump(view_count_dict, file)
 
 
 
-def extract_frames(clipped_video_data_path, num_frames, times):
+
+
+
+def extract_frames(clipped_video_data_path, num_frames, times, start_index, end_index):
     '''
     :param clipped_video_data_path: <str> path to clipped video files
     :param num_frames: <int> number of frames to extract
@@ -44,23 +64,26 @@ def extract_frames(clipped_video_data_path, num_frames, times):
     else:
 
         file_names = os.listdir(clipped_video_data_path)
-        for file_name in file_names:
+        for file_name in file_names[start_index:end_index]:
 
             # create directory for frames
             os.makedirs(os.path.join(LocalConfig.FRAMES_BASE_PATH,
                                      file_name[:-4]),
                         exist_ok=True)
-            # load video
-            video_clip = VideoFileClip(os.path.join(clipped_video_data_path, file_name))
-            # extract and store frames
-            for idx, time in enumerate(times):
-                frame_path = os.path.join(GlobalConfig.FRAMES_BASE_PATH,
-                                          file_name[:-4],
-                                          'frame_{}.png'.format(idx+1))
-                video_clip.save_frame(frame_path, str(time))
-            # close loaded video and audio
-            video_clip.reader.close()
-            video_clip.audio.reader.close_proc()
+            try:
+                # load video
+                video_clip = VideoFileClip(os.path.join(clipped_video_data_path, file_name))
+                # extract and store frames
+                for idx, time in enumerate(times):
+                    frame_path = os.path.join(GlobalConfig.FRAMES_BASE_PATH,
+                                              file_name[:-4],
+                                              'frame_{}.png'.format(idx+1))
+                    video_clip.save_frame(frame_path, str(time))
+                # close loaded video and audio
+                video_clip.reader.close()
+                video_clip.audio.reader.close_proc()
+            except Exception as e:
+                print('Problem occured')
 
 
 def clean_dataset_with_dict(cat_video_boolean_dict):
@@ -81,25 +104,19 @@ def clean_dataset_with_dict(cat_video_boolean_dict):
 
     for key, value in cat_video_boolean_dict.items():
 
-        if value == 0:
-            continue
-        elif value == 1:
-            # copy clipped videos
-            source = os.path.join(source_basepath_video, str(key)+'.mp4')
-            destination = os.path.join(destination_basepath_video, str(key)+'.mp4')
-            shutil.copyfile(source, destination)
+        # copy clipped videos
+        source = os.path.join(source_basepath_video, str(key)+'.mp4')
+        destination = os.path.join(destination_basepath_video, str(key)+'.mp4')
+        shutil.copyfile(source, destination)
 
-            # copy frames
-            source = os.path.join(source_basepath_frames, key)
-            os.makedirs(os.path.join(destination_basepath_frames, key))
-            destination = os.path.join(destination_basepath_frames, key)
-            frames = os.listdir(source)
-            for frame in frames:
-                frame_source = os.path.join(source, frame)
-                frame_destination = os.path.join(destination, frame)
-                shutil.copy(frame_source, frame_destination)
-        else:
-            print('Unknown value for key', key)
+        # copy frames
+        os.makedirs(os.path.join(destination_basepath_frames, key), exist_ok=True)
+        for frame in value:
+            frame_source = os.path.join(source_basepath_frames, key, frame)
+            frame_destination = os.path.join(destination_basepath_frames, key, frame)
+            shutil.copy(frame_source, frame_destination)
+
+
 
 
 

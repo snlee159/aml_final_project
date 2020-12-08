@@ -39,8 +39,9 @@ def preprocess_and_predict_frames(model, frame_dir):
     # Keep track which video show cats and which ones don't
     cat_video_boolean_dict = dict()
 
-    for subdir in subdir_names:
+    for idx, subdir in enumerate(subdir_names):
 
+        print('#', idx)
         print('=====================', subdir, '=====================')
 
         # list frame_1, frame_2, frame_3, ... in each subdir
@@ -49,6 +50,7 @@ def preprocess_and_predict_frames(model, frame_dir):
         # for idx in range(0, len(os.listdir(os.path.join(frame_dir, subdir)))):
         #     frame_names.append('frame_{}.png'.format(idx+1))
         cat_frames_counter = 0
+        cat_frame_list = []
         for idx, frame_name in enumerate(frame_names):
 
             print('=========', frame_name, '=========')
@@ -85,8 +87,10 @@ def preprocess_and_predict_frames(model, frame_dir):
 
                 if predicted_class in GlobalConfig.VGG16_CAT_LABEL_INDICES:
                     print('Cat detected!')
+                    cat_frame_list.append(frame_name)
                     cat_frames_counter += 1
                     break
+
 
         # decide whether its a cat video or not
         try:
@@ -95,14 +99,14 @@ def preprocess_and_predict_frames(model, frame_dir):
             print('No cat frames exist for this clip.')
             cat_non_cat_ratio = 0
         print('Detected cats on {} % of the frames.'.format(cat_non_cat_ratio*100))
-        if cat_non_cat_ratio > 0.01:
-            cat_video_boolean_dict.update({subdir: 1})
+        if cat_non_cat_ratio > 0.2:
+            cat_video_boolean_dict.update({subdir: cat_frame_list})
             print('-->Cat video.')
         else:
-            cat_video_boolean_dict.update({subdir: 0})
+            # cat_video_boolean_dict.update({subdir: 0})
             print('-->Probably not a cat video.')
 
-    with open('../pkl/cat_video_boolean_dict.pkl', 'wb') as file:
+    with open('../pkl_final/cat_video_boolean_dict.pkl', 'wb') as file:
         pickle.dump(cat_video_boolean_dict, file)
 
     return cat_video_boolean_dict
