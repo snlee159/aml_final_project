@@ -13,6 +13,8 @@ from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.applications.vgg16 import preprocess_input
 from tensorflow.keras import optimizers
+from tensorflow import keras
+from tensorflow.keras import layers
 
 
 
@@ -244,8 +246,9 @@ def vgg16_conv_base_feature_array(show_model_summary =True,
                                   data_path=GlobalConfig.FRAMES_CLEANED_BASE_PATH,
                                   image_select_method='random'):
 
-    # load entire v166 model
-    vgg16_model = load_vgg16_model()
+    # # load entire v166 model
+    vgg16_model = load_vgg16_model(include_top=True)
+
 
     # extract only convolutional base and flatten layer
     custom_model = Sequential()
@@ -256,11 +259,6 @@ def vgg16_conv_base_feature_array(show_model_summary =True,
     for layer in custom_model.layers:
         layer.trainable = False
 
-    # compile model
-    custom_model.compile(optimizer=optimizers.RMSprop(lr=2e-5),
-                         loss='categorical_crossentropy',
-                         metrics=['acc'])
-
     # show model summary is wanted
     if show_model_summary:
         print(custom_model.summary())
@@ -268,16 +266,24 @@ def vgg16_conv_base_feature_array(show_model_summary =True,
     # start extracting images to feed them into custom_model
     clip_names = os.listdir(data_path)
 
+    # feature dict
+    feature_dict = dict()
+
     for clip_name in clip_names[:3]:
 
         # list frame names of respective clip
         frame_names = os.listdir(os.path.join(data_path, clip_name))
 
-        if image_select_method == 'random':
 
+        if image_select_method == 'random':
             random_frame_idx = np.random.randint(low=0, high=len(frame_names))
-            image = load_img(os.path.join(data_path, clip_name, frame_names[random_frame_idx]),
-                             target_size=(224, 224, 3))
+            try:
+                image = load_img(os.path.join(data_path, clip_name, frame_names[random_frame_idx]),
+                                 target_size=(224, 224, 3))
+            except Exception as e:
+                print('Error while loading image')
+                image = load_img(os.path.join(data_path, clip_name, frame_names[0]),
+                                 target_size=(224, 224, 3))
             image_array = img_to_array(image)
             image_array_reshaped = image_array.reshape((1,
                                                         image_array.shape[0],
@@ -288,22 +294,51 @@ def vgg16_conv_base_feature_array(show_model_summary =True,
 
             # make prediction
             prediction = custom_model.predict(preprocessed_image)
-            # prediction = vgg16_model.predict(preprocessed_image)
 
-            # print('Prediction shaoe:', prediction.shape)
-            # print('Prediction:', prediction)
-            print()
-
+            feature_dict.update({clip_name: prediction})
 
 
         elif image_select_method == 'average':
-            pass
+            frames = []
+            for frame in frame_names:
+                try:
+                    image = load_img(os.path.join(data_path, clip_name, frame),
+                                     target_size=(224, 224, 3))
+                    image_array = img_to_array(image)
+                    frames.append(image_array)
+
+                except Exception as e:
+                    print('Error while loading image')
+
+            # compute average
+            if len(frames) > 1:
+                image_array = np.mean(frames, axis=0)
+            else:
+                image_array = frames[0]
+
+            image_array_reshaped = image_array.reshape((1,
+                                                        image_array.shape[0],
+                                                        image_array.shape[1],
+                                                        image_array.shape[2]))
+
+            preprocessed_image = preprocess_input(image_array_reshaped)
+
+            # make prediction
+            prediction = custom_model.predict(preprocessed_image)
+
+            feature_dict.update({clip_name: prediction})
+
+
         elif image_select_method == 'max':
             pass
         elif image_select_method == 'lstm':
             pass
         else:
             pass
+
+
+        with open('../pkl_final/vgg16_feature_method_____'+image_select_method+'_dict.pkl', 'wb') as file:
+            pickle.dump(feature_dict, file)
 
 
 

@@ -8,13 +8,16 @@ from tensorflow.keras.applications.vgg16 import decode_predictions
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 
 
-def load_vgg16_model():
+def load_vgg16_model(include_top=True):
 
     '''
     :return: loaded vgg16 model
     '''
+    if include_top:
+        vgg16_model = VGG16()
 
-    vgg16_model = VGG16()
+    else:
+        vgg16_model = VGG16(include_top=False)
     return vgg16_model
 
 

@@ -73,8 +73,8 @@ vgg16_conv_base_feature_array()
 #                        type=GlobalConfig.RIDGE_REG_TYPE)
 
 
-# #
-# with open('../pkl_final/hog_feature_dict_K_20.pkl', 'rb') as file:
+#
+# with open('../pkl_final/cat_video_boolean_dict.pkl', 'rb') as file:
 #     dic = pickle.load(file)
 #
 print()
