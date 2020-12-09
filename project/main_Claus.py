@@ -41,9 +41,10 @@ from Regression.regression_model import train_test_regression_model
 
 # ===== feature extraction =====
 # feature_extraction_model = load_feature_extraction_model()
-# extract_pixel_change_feature(frame_dir=GlobalConfig.FRAMES_CLEANED_BASE_PATH)
+extract_pixel_change_feature(frame_dir=GlobalConfig.FRAMES_CLEANED_BASE_PATH)
 # extract_viewcount_feature_from_raw_videos('cat_video_boolean_dict.pkl')
 # extract_video_title_from_raw_videos('cat_video_boolean_dict.pkl')
+# hog_feature_extraction(num_clusters=10)
 
 
 
@@ -70,11 +71,11 @@ from Regression.regression_model import train_test_regression_model
 #                        type=GlobalConfig.RIDGE_REG_TYPE)
 
 
+# #
+# with open('../pkl_final/hog_feature_dict_K_20.pkl', 'rb') as file:
+#     dic = pickle.load(file)
 #
-with open('../pkl_final/all_view_count_dict.pkl', 'rb') as file:
-    dic = pickle.load(file)
-
-print()
+# print()
 #
 # print()
 

@@ -43,9 +43,10 @@ def extract_pixel_change_feature(frame_dir, make_dummy_feature=False, threshold=
         feature_dict.update({subdir: {}})
 
         # list frame_1, frame_2, frame_3, ... in each subdir
-        frame_names = []
-        for idx in range(0, len(os.listdir(os.path.join(frame_dir, subdir)))):
-            frame_names.append('frame_{}.png'.format(idx + 1))
+        frame_names = os.listdir(os.path.join(frame_dir, subdir))
+        # frame_names = []
+        # for idx in range(0, len(os.listdir(os.path.join(frame_dir, subdir)))):
+        #     frame_names.append('frame_{}.png'.format(idx + 1))
 
         for frame_idx in range(2, len(frame_names)+1):
             frame_i = load_img(os.path.join(frame_dir, subdir, 'frame_{}.png'.format(frame_idx)))
@@ -65,10 +66,10 @@ def extract_pixel_change_feature(frame_dir, make_dummy_feature=False, threshold=
                 feature_dict.get(subdir).update({'change_to_frame_{}'.format(frame_idx): average_pixel_change})
 
     if make_dummy_feature:
-        with open('../pkl/pixel_change_dummy_feature_dict.pkl', 'wb') as file:
+        with open('../pkl_final/pixel_change_dummy_feature_dict.pkl', 'wb') as file:
             pickle.dump(feature_dict, file)
     else:
-        with open('pixel_change_feature_dict.pkl', 'wb') as file:
+        with open('../pkl_final/pixel_change_feature_dict.pkl', 'wb') as file:
             pickle.dump(feature_dict, file)
 
 
@@ -208,7 +209,8 @@ def hog_feature_extraction(num_clusters):
 
     # extract features for each image
     hog_feature_dict = dict()
-    for clip_dir in os.listdir(GlobalConfig.FRAMES_CLEANED_BASE_PATH):
+    for idx, clip_dir in enumerate(os.listdir(GlobalConfig.FRAMES_CLEANED_BASE_PATH)):
+        print('Feature extraction for clip ', idx)
         hog_feature_dict.update({clip_dir: np.zeros(num_clusters)})
         for frame in os.listdir(os.path.join(GlobalConfig.FRAMES_CLEANED_BASE_PATH, clip_dir)):
             try:
@@ -229,7 +231,7 @@ def hog_feature_extraction(num_clusters):
 
 
     # store hog_feature_dict
-    with open('../pkl/hog_feature_dict_K_{}.pkl'.format(num_clusters), 'wb') as file:
+    with open('../pkl_final/hog_feature_dict_K_{}.pkl'.format(num_clusters), 'wb') as file:
         pickle.dump(hog_feature_dict, file)
 
 
