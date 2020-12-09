@@ -6,6 +6,7 @@ from project.vgg16_cat_detector import load_vgg16_model
 from project.vgg16_cat_detector import preprocess_and_predict_frames
 from project.feature_extraction import load_feature_extraction_model
 from project.feature_extraction import extract_pixel_change_feature
+from project.feature_extraction import vgg16_conv_base_feature_array
 from project.feature_extraction import extract_viewcount_feature_from_raw_videos
 from project.feature_extraction import extract_video_title_from_raw_videos
 from project.feature_extraction import hog_feature_extraction
@@ -41,10 +42,11 @@ from Regression.regression_model import train_test_regression_model
 
 # ===== feature extraction =====
 # feature_extraction_model = load_feature_extraction_model()
-extract_pixel_change_feature(frame_dir=GlobalConfig.FRAMES_CLEANED_BASE_PATH)
+# extract_pixel_change_feature(frame_dir=GlobalConfig.FRAMES_CLEANED_BASE_PATH)
 # extract_viewcount_feature_from_raw_videos('cat_video_boolean_dict.pkl')
 # extract_video_title_from_raw_videos('cat_video_boolean_dict.pkl')
 # hog_feature_extraction(num_clusters=10)
+vgg16_conv_base_feature_array()
 
 
 

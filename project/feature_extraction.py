@@ -10,6 +10,9 @@ import matplotlib.pyplot as plt
 from project.global_config import GlobalConfig
 from project.vgg16_cat_detector import load_vgg16_model
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.applications.vgg16 import preprocess_input
+from tensorflow.keras import optimizers
 
 
 
@@ -233,6 +236,81 @@ def hog_feature_extraction(num_clusters):
     # store hog_feature_dict
     with open('../pkl_final/hog_feature_dict_K_{}.pkl'.format(num_clusters), 'wb') as file:
         pickle.dump(hog_feature_dict, file)
+
+
+
+
+def vgg16_conv_base_feature_array(show_model_summary =True,
+                                  data_path=GlobalConfig.FRAMES_CLEANED_BASE_PATH,
+                                  image_select_method='random'):
+
+    # load entire v166 model
+    vgg16_model = load_vgg16_model()
+
+    # extract only convolutional base and flatten layer
+    custom_model = Sequential()
+    for layer in vgg16_model.layers[0: 20]:
+        custom_model.add(layer)
+
+    # freeze weights
+    for layer in custom_model.layers:
+        layer.trainable = False
+
+    # compile model
+    custom_model.compile(optimizer=optimizers.RMSprop(lr=2e-5),
+                         loss='categorical_crossentropy',
+                         metrics=['acc'])
+
+    # show model summary is wanted
+    if show_model_summary:
+        print(custom_model.summary())
+
+    # start extracting images to feed them into custom_model
+    clip_names = os.listdir(data_path)
+
+    for clip_name in clip_names[:3]:
+
+        # list frame names of respective clip
+        frame_names = os.listdir(os.path.join(data_path, clip_name))
+
+        if image_select_method == 'random':
+
+            random_frame_idx = np.random.randint(low=0, high=len(frame_names))
+            image = load_img(os.path.join(data_path, clip_name, frame_names[random_frame_idx]),
+                             target_size=(224, 224, 3))
+            image_array = img_to_array(image)
+            image_array_reshaped = image_array.reshape((1,
+                                                        image_array.shape[0],
+                                                        image_array.shape[1],
+                                                        image_array.shape[2]))
+
+            preprocessed_image = preprocess_input(image_array_reshaped)
+
+            # make prediction
+            prediction = custom_model.predict(preprocessed_image)
+            # prediction = vgg16_model.predict(preprocessed_image)
+
+            # print('Prediction shaoe:', prediction.shape)
+            # print('Prediction:', prediction)
+
+
+
+        elif image_select_method == 'average':
+            pass
+        elif image_select_method == 'max':
+            pass
+        elif image_select_method == 'lstm':
+            pass
+        else:
+            pass
+
+
+
+
+
+
+
+
 
 
 
