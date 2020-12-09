@@ -77,7 +77,7 @@ vgg16_conv_base_feature_array()
 # with open('../pkl_final/hog_feature_dict_K_20.pkl', 'rb') as file:
 #     dic = pickle.load(file)
 #
-# print()
+print()
 #
 # print()
 

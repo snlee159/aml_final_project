@@ -292,6 +292,7 @@ def vgg16_conv_base_feature_array(show_model_summary =True,
 
             # print('Prediction shaoe:', prediction.shape)
             # print('Prediction:', prediction)
+            print()
 
 
 
