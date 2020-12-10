@@ -93,9 +93,10 @@ def extract_viewcount_feature_from_raw_videos(cat_video_boolean_dict):
     # load indices of relevant cat videos
     relevant_cat_video_indices = []
     for key, value in cat_video_boolean_dict.items():
-        if value == 1:
-            key_regex = re.findall(r'Clip_\d*', str(key))[0]
-            relevant_cat_video_indices.append(int(key_regex[5:]))
+        # relevant_cat_video_indices.append(key)
+        # if value == 1:
+        key_regex = re.findall(r'Clip_\d*', str(key))[0]
+        relevant_cat_video_indices.append(int(key_regex[5:]))
 
     # create new feature dictionary for view count
     view_count_feature_dict = dict()
@@ -113,7 +114,7 @@ def extract_viewcount_feature_from_raw_videos(cat_video_boolean_dict):
             view_count_feature_dict.update({'Clip_'+str(video_idx): view_count})
 
     # save view_count_feature dict
-    with open('view_count_feature_dict.pkl', 'wb') as file:
+    with open('../pkl_final/view_count_feature_dict.pkl', 'wb') as file:
         pickle.dump(view_count_feature_dict, file)
 
 
