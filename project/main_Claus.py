@@ -44,7 +44,7 @@ from Regression.regression_model import train_test_regression_model
 # feature_extraction_model = load_feature_extraction_model()
 # extract_pixel_change_feature(frame_dir=GlobalConfig.FRAMES_CLEANED_BASE_PATH)
 # extract_viewcount_feature_from_raw_videos('../pkl_final/cat_video_boolean_dict.pkl')
-# extract_video_title_from_raw_videos('cat_video_boolean_dict.pkl')
+# extract_video_title_from_raw_videos('../pkl_final/cat_video_boolean_dict.pkl')
 # hog_feature_extraction(num_clusters=10)
 # vgg16_conv_base_feature_array()
 
@@ -74,7 +74,7 @@ from Regression.regression_model import train_test_regression_model
 
 
 #
-with open('../pkl_final/view_count_feature_dict.pkl', 'rb') as file:
+with open('../pkl_final/video_title_feature_dict.pkl', 'rb') as file:
     dic = pickle.load(file)
 
 print()
