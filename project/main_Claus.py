@@ -13,6 +13,9 @@ from project.feature_extraction import hog_feature_extraction
 from project.cat_video_editing import clean_dataset_with_dict
 from Regression.data_preprocessing import extract_regression_features
 from Regression.regression_model import train_test_regression_model
+from project.CNN_binary_classification import create_binary_dataset, create_train_val_test_sets, CNN_model
+from project.CNN_binary_classification import evaluate_model, temp_method
+
 
 
 # ===== Download test video =====
@@ -49,6 +52,16 @@ from Regression.regression_model import train_test_regression_model
 # vgg16_conv_base_feature_array()
 
 
+# ===== Binary CNN Calssification Model =====
+# create_binary_dataset()
+# create_train_val_test_sets()
+transfer_learning_model1 = CNN_model(model_name='transfer_learning_model1')
+transfer_learning_model1.set_up_model(use_transfer_learning=True)
+transfer_learning_model1.set_up_data_generators(use_data_augmentation=False)
+transfer_learning_model1.train_model()
+transfer_learning_model1.plot_model_history()
+
+# evaluate_model(model_name='cnn_model_2')
 
 # ===== Regression Model =====
 # X_train, y_train, X_test, y_test = \
@@ -74,10 +87,10 @@ from Regression.regression_model import train_test_regression_model
 
 
 #
-with open('../pkl_final/video_title_feature_dict.pkl', 'rb') as file:
-    dic = pickle.load(file)
-
-print()
+# with open('../pkl_final/video_title_feature_dict.pkl', 'rb') as file:
+#     dic = pickle.load(file)
+#
+# print()
 #
 # print()
 
