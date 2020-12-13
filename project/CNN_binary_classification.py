@@ -182,7 +182,7 @@ class CNN_model:
             conv_base = VGG16(weights='imagenet',
                               include_top=False,
                               input_shape=(224, 224, 3))
-            conv_base.trainable = False
+            conv_base.trainable = True
             # set_trainable = False
             # for layer in conv_base.layers:
             #     if 'block4' in layer.name or 'block5' in layer.name:
@@ -201,17 +201,29 @@ class CNN_model:
             self.model = models.Sequential()
             self.model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(224, 224, 3)))
             self.model.add(layers.Conv2D(32, (3, 3), activation='relu'))
+            self.model.add(layers.Conv2D(32, (3, 3), activation='relu'))
             self.model.add(layers.MaxPooling2D((2, 2)))
             self.model.add(layers.Conv2D(64, (3, 3), activation='relu'))
             self.model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+            self.model.add(layers.Conv2D(64, (3, 3), activation='relu'))
             self.model.add(layers.MaxPooling2D((2, 2)))
             self.model.add(layers.Conv2D(128, (3, 3), activation='relu'))
             self.model.add(layers.Conv2D(128, (3, 3), activation='relu'))
-            self.model.add(layers.MaxPooling2D((2, 2)))
             self.model.add(layers.Conv2D(128, (3, 3), activation='relu'))
+            self.model.add(layers.MaxPooling2D((2, 2)))
+            self.model.add(layers.Conv2D(256, (3, 3), activation='relu'))
+            self.model.add(layers.Conv2D(256, (3, 3), activation='relu'))
+            self.model.add(layers.Conv2D(512, (3, 3), activation='relu'))
+            self.model.add(layers.Conv2D(512, (3, 3), activation='relu'))
             self.model.add(layers.MaxPooling2D((2, 2)))
             self.model.add(layers.Flatten())
+            self.model.add(layers.Dense(1024, activation='relu'))
+            self.model.add(layers.Dense(1024, activation='relu'))
+            self.model.add(layers.Dense(1024, activation='relu'))
             self.model.add(layers.Dense(512, activation='relu'))
+            self.model.add(layers.Dense(512, activation='relu'))
+            self.model.add(layers.Dense(256, activation='relu'))
+            self.model.add(layers.Dense(64, activation='relu'))
             self.model.add(layers.Dense(2, activation='sigmoid'))
 
         print(self.model.summary())
@@ -228,12 +240,12 @@ class CNN_model:
 
         if use_data_augmentation:
             train_datagen = ImageDataGenerator(rescale=1./255,
-                                               rotation_range=40,
+                                               rotation_range=20,
                                                width_shift_range=0.2,
                                                height_shift_range=0.2,
                                                shear_range=0.2,
                                                zoom_range=0.2,
-                                               horizontal_flip=True,
+                                               horizontal_flip=False,
                                                fill_mode='nearest')
         else:
             train_datagen = ImageDataGenerator(rescale=1./255)
@@ -253,7 +265,7 @@ class CNN_model:
     def train_model(self, save_model=True):
         self.history = self.model.fit_generator(self.train_generator,
                                                   steps_per_epoch=100,
-                                                  epochs=50,
+                                                  epochs=100,
                                                   validation_data=self.validation_generator,
                                                   validation_steps=50,
                                                   use_multiprocessing=False,
@@ -302,7 +314,7 @@ def evaluate_model(model_name):
     # popular predictions
     actual_labels_popular = []
     predictions_popular = []
-    for popular_image in os.listdir(test_popular_dir)[:20]:
+    for popular_image in os.listdir(test_popular_dir):
 
         image =load_img(os.path.join(test_popular_dir, popular_image), target_size=(224, 224, 3))
         image_array = img_to_array(image)
@@ -313,15 +325,15 @@ def evaluate_model(model_name):
                                                     image_array.shape[2]))
         prediction = model.predict(image_array_reshaped)
         if prediction[0][0] >= 0.5:
-            predictions_popular.append(1)
-        else:
             predictions_popular.append(0)
-        actual_labels_popular.append(1)
+        else:
+            predictions_popular.append(1)
+        actual_labels_popular.append(0)
 
     # unpopular predictions
     actual_labels_unpopular = []
     predictions_unpopular = []
-    for unpopular_image in os.listdir(test_unpopular_dir)[:20]:
+    for unpopular_image in os.listdir(test_unpopular_dir)[:len(os.listdir(test_popular_dir))]:
 
         image =load_img(os.path.join(test_unpopular_dir, unpopular_image), target_size=(224, 224, 3))
         image_array = img_to_array(image)
@@ -332,10 +344,10 @@ def evaluate_model(model_name):
                                                     image_array.shape[2]))
         prediction = model.predict(image_array_reshaped)
         if prediction[0][1] > 0.5:
-            predictions_unpopular.append(0)
-        else:
             predictions_unpopular.append(1)
-        actual_labels_unpopular.append(0)
+        else:
+            predictions_unpopular.append(0)
+        actual_labels_unpopular.append(1)
 
     # combine arrays
     labels = np.concatenate((actual_labels_popular, actual_labels_unpopular), axis=0)

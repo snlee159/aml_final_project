@@ -55,13 +55,13 @@ from project.CNN_binary_classification import evaluate_model, temp_method
 # ===== Binary CNN Calssification Model =====
 # create_binary_dataset()
 # create_train_val_test_sets()
-transfer_learning_model1 = CNN_model(model_name='transfer_learning_model1')
-transfer_learning_model1.set_up_model(use_transfer_learning=True)
-transfer_learning_model1.set_up_data_generators(use_data_augmentation=False)
-transfer_learning_model1.train_model()
-transfer_learning_model1.plot_model_history()
+# big_model_4 = CNN_model(model_name='big_model_4')
+# big_model_4.set_up_model(use_transfer_learning=False)
+# big_model_4.set_up_data_generators(use_data_augmentation=False)
+# big_model_4.train_model()
+# big_model_4.plot_model_history()
 
-# evaluate_model(model_name='cnn_model_2')
+evaluate_model(model_name='big_model_4')
 
 # ===== Regression Model =====
 # X_train, y_train, X_test, y_test = \
